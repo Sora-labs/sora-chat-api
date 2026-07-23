@@ -1,0 +1,20 @@
+model User {
+  id          String   @id @default(uuid())
+  email       String   @unique
+  username    String?  @unique
+  usernameSet Boolean  @default(false) // enforces "change once"
+  name        String?
+  avatarUrl   String?
+  bio         String?
+  isBot       Boolean  @default(false) // true for Sora
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  refreshTokens RefreshToken[]
+  otpCodes      OtpCode[]
+
+  friendsInitiated Friendship[] @relation("UserFriends")
+  friendsReceived  Friendship[] @relation("FriendOfUser")
+
+  sentMessages Message[] @relation("SentMessages")
+}

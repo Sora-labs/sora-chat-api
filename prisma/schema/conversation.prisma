@@ -1,0 +1,7 @@
+model Conversation {
+  id           String                    @id @default(uuid())
+  isBotChat    Boolean                   @default(false)
+  createdAt    DateTime                  @default(now())
+  messages     Message[]
+  participants ConversationParticipant[]
+}

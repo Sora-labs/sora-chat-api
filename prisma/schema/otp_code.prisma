@@ -1,0 +1,11 @@
+model OtpCode {
+  id        String   @id @default(uuid())
+  userEmail String
+  code      String
+  expiresAt DateTime
+  consumed  Boolean  @default(false)
+  createdAt DateTime @default(now())
+  user      User?    @relation(fields: [userEmail], references: [email])
+
+  @@index([userEmail])
+}
