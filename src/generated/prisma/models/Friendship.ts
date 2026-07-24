@@ -171,8 +171,8 @@ export type FriendshipWhereInput = {
   OR?: Prisma.FriendshipWhereInput[]
   NOT?: Prisma.FriendshipWhereInput | Prisma.FriendshipWhereInput[]
   id?: Prisma.StringFilter<"Friendship"> | string
-  userId?: Prisma.StringFilter<"Friendship"> | string
-  friendId?: Prisma.StringFilter<"Friendship"> | string
+  userId?: Prisma.UuidFilter<"Friendship"> | string
+  friendId?: Prisma.UuidFilter<"Friendship"> | string
   createdAt?: Prisma.DateTimeFilter<"Friendship"> | Date | string
   user?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
   friend?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
@@ -193,8 +193,8 @@ export type FriendshipWhereUniqueInput = Prisma.AtLeast<{
   AND?: Prisma.FriendshipWhereInput | Prisma.FriendshipWhereInput[]
   OR?: Prisma.FriendshipWhereInput[]
   NOT?: Prisma.FriendshipWhereInput | Prisma.FriendshipWhereInput[]
-  userId?: Prisma.StringFilter<"Friendship"> | string
-  friendId?: Prisma.StringFilter<"Friendship"> | string
+  userId?: Prisma.UuidFilter<"Friendship"> | string
+  friendId?: Prisma.UuidFilter<"Friendship"> | string
   createdAt?: Prisma.DateTimeFilter<"Friendship"> | Date | string
   user?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
   friend?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
@@ -215,8 +215,8 @@ export type FriendshipScalarWhereWithAggregatesInput = {
   OR?: Prisma.FriendshipScalarWhereWithAggregatesInput[]
   NOT?: Prisma.FriendshipScalarWhereWithAggregatesInput | Prisma.FriendshipScalarWhereWithAggregatesInput[]
   id?: Prisma.StringWithAggregatesFilter<"Friendship"> | string
-  userId?: Prisma.StringWithAggregatesFilter<"Friendship"> | string
-  friendId?: Prisma.StringWithAggregatesFilter<"Friendship"> | string
+  userId?: Prisma.UuidWithAggregatesFilter<"Friendship"> | string
+  friendId?: Prisma.UuidWithAggregatesFilter<"Friendship"> | string
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"Friendship"> | Date | string
 }
 
@@ -452,8 +452,8 @@ export type FriendshipScalarWhereInput = {
   OR?: Prisma.FriendshipScalarWhereInput[]
   NOT?: Prisma.FriendshipScalarWhereInput | Prisma.FriendshipScalarWhereInput[]
   id?: Prisma.StringFilter<"Friendship"> | string
-  userId?: Prisma.StringFilter<"Friendship"> | string
-  friendId?: Prisma.StringFilter<"Friendship"> | string
+  userId?: Prisma.UuidFilter<"Friendship"> | string
+  friendId?: Prisma.UuidFilter<"Friendship"> | string
   createdAt?: Prisma.DateTimeFilter<"Friendship"> | Date | string
 }
 

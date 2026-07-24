@@ -212,7 +212,7 @@ export type UserWhereInput = {
   AND?: Prisma.UserWhereInput | Prisma.UserWhereInput[]
   OR?: Prisma.UserWhereInput[]
   NOT?: Prisma.UserWhereInput | Prisma.UserWhereInput[]
-  id?: Prisma.StringFilter<"User"> | string
+  id?: Prisma.UuidFilter<"User"> | string
   email?: Prisma.StringFilter<"User"> | string
   username?: Prisma.StringNullableFilter<"User"> | string | null
   usernameSet?: Prisma.BoolFilter<"User"> | boolean
@@ -223,7 +223,6 @@ export type UserWhereInput = {
   createdAt?: Prisma.DateTimeFilter<"User"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"User"> | Date | string
   refreshTokens?: Prisma.RefreshTokenListRelationFilter
-  otpCodes?: Prisma.OtpCodeListRelationFilter
   friendsInitiated?: Prisma.FriendshipListRelationFilter
   friendsReceived?: Prisma.FriendshipListRelationFilter
   sentMessages?: Prisma.MessageListRelationFilter
@@ -241,7 +240,6 @@ export type UserOrderByWithRelationInput = {
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   refreshTokens?: Prisma.RefreshTokenOrderByRelationAggregateInput
-  otpCodes?: Prisma.OtpCodeOrderByRelationAggregateInput
   friendsInitiated?: Prisma.FriendshipOrderByRelationAggregateInput
   friendsReceived?: Prisma.FriendshipOrderByRelationAggregateInput
   sentMessages?: Prisma.MessageOrderByRelationAggregateInput
@@ -262,7 +260,6 @@ export type UserWhereUniqueInput = Prisma.AtLeast<{
   createdAt?: Prisma.DateTimeFilter<"User"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"User"> | Date | string
   refreshTokens?: Prisma.RefreshTokenListRelationFilter
-  otpCodes?: Prisma.OtpCodeListRelationFilter
   friendsInitiated?: Prisma.FriendshipListRelationFilter
   friendsReceived?: Prisma.FriendshipListRelationFilter
   sentMessages?: Prisma.MessageListRelationFilter
@@ -288,7 +285,7 @@ export type UserScalarWhereWithAggregatesInput = {
   AND?: Prisma.UserScalarWhereWithAggregatesInput | Prisma.UserScalarWhereWithAggregatesInput[]
   OR?: Prisma.UserScalarWhereWithAggregatesInput[]
   NOT?: Prisma.UserScalarWhereWithAggregatesInput | Prisma.UserScalarWhereWithAggregatesInput[]
-  id?: Prisma.StringWithAggregatesFilter<"User"> | string
+  id?: Prisma.UuidWithAggregatesFilter<"User"> | string
   email?: Prisma.StringWithAggregatesFilter<"User"> | string
   username?: Prisma.StringNullableWithAggregatesFilter<"User"> | string | null
   usernameSet?: Prisma.BoolWithAggregatesFilter<"User"> | boolean
@@ -312,7 +309,6 @@ export type UserCreateInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   refreshTokens?: Prisma.RefreshTokenCreateNestedManyWithoutUserInput
-  otpCodes?: Prisma.OtpCodeCreateNestedManyWithoutUserInput
   friendsInitiated?: Prisma.FriendshipCreateNestedManyWithoutUserInput
   friendsReceived?: Prisma.FriendshipCreateNestedManyWithoutFriendInput
   sentMessages?: Prisma.MessageCreateNestedManyWithoutSenderInput
@@ -330,7 +326,6 @@ export type UserUncheckedCreateInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   refreshTokens?: Prisma.RefreshTokenUncheckedCreateNestedManyWithoutUserInput
-  otpCodes?: Prisma.OtpCodeUncheckedCreateNestedManyWithoutUserInput
   friendsInitiated?: Prisma.FriendshipUncheckedCreateNestedManyWithoutUserInput
   friendsReceived?: Prisma.FriendshipUncheckedCreateNestedManyWithoutFriendInput
   sentMessages?: Prisma.MessageUncheckedCreateNestedManyWithoutSenderInput
@@ -348,7 +343,6 @@ export type UserUpdateInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   refreshTokens?: Prisma.RefreshTokenUpdateManyWithoutUserNestedInput
-  otpCodes?: Prisma.OtpCodeUpdateManyWithoutUserNestedInput
   friendsInitiated?: Prisma.FriendshipUpdateManyWithoutUserNestedInput
   friendsReceived?: Prisma.FriendshipUpdateManyWithoutFriendNestedInput
   sentMessages?: Prisma.MessageUpdateManyWithoutSenderNestedInput
@@ -366,7 +360,6 @@ export type UserUncheckedUpdateInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   refreshTokens?: Prisma.RefreshTokenUncheckedUpdateManyWithoutUserNestedInput
-  otpCodes?: Prisma.OtpCodeUncheckedUpdateManyWithoutUserNestedInput
   friendsInitiated?: Prisma.FriendshipUncheckedUpdateManyWithoutUserNestedInput
   friendsReceived?: Prisma.FriendshipUncheckedUpdateManyWithoutFriendNestedInput
   sentMessages?: Prisma.MessageUncheckedUpdateManyWithoutSenderNestedInput
@@ -414,11 +407,6 @@ export type UserUncheckedUpdateManyInput = {
 export type UserScalarRelationFilter = {
   is?: Prisma.UserWhereInput
   isNot?: Prisma.UserWhereInput
-}
-
-export type UserNullableScalarRelationFilter = {
-  is?: Prisma.UserWhereInput | null
-  isNot?: Prisma.UserWhereInput | null
 }
 
 export type UserCountOrderByAggregateInput = {
@@ -502,22 +490,6 @@ export type UserUpdateOneRequiredWithoutSentMessagesNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutSentMessagesInput, Prisma.UserUpdateWithoutSentMessagesInput>, Prisma.UserUncheckedUpdateWithoutSentMessagesInput>
 }
 
-export type UserCreateNestedOneWithoutOtpCodesInput = {
-  create?: Prisma.XOR<Prisma.UserCreateWithoutOtpCodesInput, Prisma.UserUncheckedCreateWithoutOtpCodesInput>
-  connectOrCreate?: Prisma.UserCreateOrConnectWithoutOtpCodesInput
-  connect?: Prisma.UserWhereUniqueInput
-}
-
-export type UserUpdateOneWithoutOtpCodesNestedInput = {
-  create?: Prisma.XOR<Prisma.UserCreateWithoutOtpCodesInput, Prisma.UserUncheckedCreateWithoutOtpCodesInput>
-  connectOrCreate?: Prisma.UserCreateOrConnectWithoutOtpCodesInput
-  upsert?: Prisma.UserUpsertWithoutOtpCodesInput
-  disconnect?: Prisma.UserWhereInput | boolean
-  delete?: Prisma.UserWhereInput | boolean
-  connect?: Prisma.UserWhereUniqueInput
-  update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutOtpCodesInput, Prisma.UserUpdateWithoutOtpCodesInput>, Prisma.UserUncheckedUpdateWithoutOtpCodesInput>
-}
-
 export type UserCreateNestedOneWithoutRefreshTokensInput = {
   create?: Prisma.XOR<Prisma.UserCreateWithoutRefreshTokensInput, Prisma.UserUncheckedCreateWithoutRefreshTokensInput>
   connectOrCreate?: Prisma.UserCreateOrConnectWithoutRefreshTokensInput
@@ -548,7 +520,6 @@ export type UserCreateWithoutFriendsInitiatedInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   refreshTokens?: Prisma.RefreshTokenCreateNestedManyWithoutUserInput
-  otpCodes?: Prisma.OtpCodeCreateNestedManyWithoutUserInput
   friendsReceived?: Prisma.FriendshipCreateNestedManyWithoutFriendInput
   sentMessages?: Prisma.MessageCreateNestedManyWithoutSenderInput
 }
@@ -565,7 +536,6 @@ export type UserUncheckedCreateWithoutFriendsInitiatedInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   refreshTokens?: Prisma.RefreshTokenUncheckedCreateNestedManyWithoutUserInput
-  otpCodes?: Prisma.OtpCodeUncheckedCreateNestedManyWithoutUserInput
   friendsReceived?: Prisma.FriendshipUncheckedCreateNestedManyWithoutFriendInput
   sentMessages?: Prisma.MessageUncheckedCreateNestedManyWithoutSenderInput
 }
@@ -587,7 +557,6 @@ export type UserCreateWithoutFriendsReceivedInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   refreshTokens?: Prisma.RefreshTokenCreateNestedManyWithoutUserInput
-  otpCodes?: Prisma.OtpCodeCreateNestedManyWithoutUserInput
   friendsInitiated?: Prisma.FriendshipCreateNestedManyWithoutUserInput
   sentMessages?: Prisma.MessageCreateNestedManyWithoutSenderInput
 }
@@ -604,7 +573,6 @@ export type UserUncheckedCreateWithoutFriendsReceivedInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   refreshTokens?: Prisma.RefreshTokenUncheckedCreateNestedManyWithoutUserInput
-  otpCodes?: Prisma.OtpCodeUncheckedCreateNestedManyWithoutUserInput
   friendsInitiated?: Prisma.FriendshipUncheckedCreateNestedManyWithoutUserInput
   sentMessages?: Prisma.MessageUncheckedCreateNestedManyWithoutSenderInput
 }
@@ -637,7 +605,6 @@ export type UserUpdateWithoutFriendsInitiatedInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   refreshTokens?: Prisma.RefreshTokenUpdateManyWithoutUserNestedInput
-  otpCodes?: Prisma.OtpCodeUpdateManyWithoutUserNestedInput
   friendsReceived?: Prisma.FriendshipUpdateManyWithoutFriendNestedInput
   sentMessages?: Prisma.MessageUpdateManyWithoutSenderNestedInput
 }
@@ -654,7 +621,6 @@ export type UserUncheckedUpdateWithoutFriendsInitiatedInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   refreshTokens?: Prisma.RefreshTokenUncheckedUpdateManyWithoutUserNestedInput
-  otpCodes?: Prisma.OtpCodeUncheckedUpdateManyWithoutUserNestedInput
   friendsReceived?: Prisma.FriendshipUncheckedUpdateManyWithoutFriendNestedInput
   sentMessages?: Prisma.MessageUncheckedUpdateManyWithoutSenderNestedInput
 }
@@ -682,7 +648,6 @@ export type UserUpdateWithoutFriendsReceivedInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   refreshTokens?: Prisma.RefreshTokenUpdateManyWithoutUserNestedInput
-  otpCodes?: Prisma.OtpCodeUpdateManyWithoutUserNestedInput
   friendsInitiated?: Prisma.FriendshipUpdateManyWithoutUserNestedInput
   sentMessages?: Prisma.MessageUpdateManyWithoutSenderNestedInput
 }
@@ -699,7 +664,6 @@ export type UserUncheckedUpdateWithoutFriendsReceivedInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   refreshTokens?: Prisma.RefreshTokenUncheckedUpdateManyWithoutUserNestedInput
-  otpCodes?: Prisma.OtpCodeUncheckedUpdateManyWithoutUserNestedInput
   friendsInitiated?: Prisma.FriendshipUncheckedUpdateManyWithoutUserNestedInput
   sentMessages?: Prisma.MessageUncheckedUpdateManyWithoutSenderNestedInput
 }
@@ -716,7 +680,6 @@ export type UserCreateWithoutSentMessagesInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   refreshTokens?: Prisma.RefreshTokenCreateNestedManyWithoutUserInput
-  otpCodes?: Prisma.OtpCodeCreateNestedManyWithoutUserInput
   friendsInitiated?: Prisma.FriendshipCreateNestedManyWithoutUserInput
   friendsReceived?: Prisma.FriendshipCreateNestedManyWithoutFriendInput
 }
@@ -733,7 +696,6 @@ export type UserUncheckedCreateWithoutSentMessagesInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   refreshTokens?: Prisma.RefreshTokenUncheckedCreateNestedManyWithoutUserInput
-  otpCodes?: Prisma.OtpCodeUncheckedCreateNestedManyWithoutUserInput
   friendsInitiated?: Prisma.FriendshipUncheckedCreateNestedManyWithoutUserInput
   friendsReceived?: Prisma.FriendshipUncheckedCreateNestedManyWithoutFriendInput
 }
@@ -766,7 +728,6 @@ export type UserUpdateWithoutSentMessagesInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   refreshTokens?: Prisma.RefreshTokenUpdateManyWithoutUserNestedInput
-  otpCodes?: Prisma.OtpCodeUpdateManyWithoutUserNestedInput
   friendsInitiated?: Prisma.FriendshipUpdateManyWithoutUserNestedInput
   friendsReceived?: Prisma.FriendshipUpdateManyWithoutFriendNestedInput
 }
@@ -783,93 +744,8 @@ export type UserUncheckedUpdateWithoutSentMessagesInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   refreshTokens?: Prisma.RefreshTokenUncheckedUpdateManyWithoutUserNestedInput
-  otpCodes?: Prisma.OtpCodeUncheckedUpdateManyWithoutUserNestedInput
   friendsInitiated?: Prisma.FriendshipUncheckedUpdateManyWithoutUserNestedInput
   friendsReceived?: Prisma.FriendshipUncheckedUpdateManyWithoutFriendNestedInput
-}
-
-export type UserCreateWithoutOtpCodesInput = {
-  id?: string
-  email: string
-  username?: string | null
-  usernameSet?: boolean
-  name?: string | null
-  avatarUrl?: string | null
-  bio?: string | null
-  isBot?: boolean
-  createdAt?: Date | string
-  updatedAt?: Date | string
-  refreshTokens?: Prisma.RefreshTokenCreateNestedManyWithoutUserInput
-  friendsInitiated?: Prisma.FriendshipCreateNestedManyWithoutUserInput
-  friendsReceived?: Prisma.FriendshipCreateNestedManyWithoutFriendInput
-  sentMessages?: Prisma.MessageCreateNestedManyWithoutSenderInput
-}
-
-export type UserUncheckedCreateWithoutOtpCodesInput = {
-  id?: string
-  email: string
-  username?: string | null
-  usernameSet?: boolean
-  name?: string | null
-  avatarUrl?: string | null
-  bio?: string | null
-  isBot?: boolean
-  createdAt?: Date | string
-  updatedAt?: Date | string
-  refreshTokens?: Prisma.RefreshTokenUncheckedCreateNestedManyWithoutUserInput
-  friendsInitiated?: Prisma.FriendshipUncheckedCreateNestedManyWithoutUserInput
-  friendsReceived?: Prisma.FriendshipUncheckedCreateNestedManyWithoutFriendInput
-  sentMessages?: Prisma.MessageUncheckedCreateNestedManyWithoutSenderInput
-}
-
-export type UserCreateOrConnectWithoutOtpCodesInput = {
-  where: Prisma.UserWhereUniqueInput
-  create: Prisma.XOR<Prisma.UserCreateWithoutOtpCodesInput, Prisma.UserUncheckedCreateWithoutOtpCodesInput>
-}
-
-export type UserUpsertWithoutOtpCodesInput = {
-  update: Prisma.XOR<Prisma.UserUpdateWithoutOtpCodesInput, Prisma.UserUncheckedUpdateWithoutOtpCodesInput>
-  create: Prisma.XOR<Prisma.UserCreateWithoutOtpCodesInput, Prisma.UserUncheckedCreateWithoutOtpCodesInput>
-  where?: Prisma.UserWhereInput
-}
-
-export type UserUpdateToOneWithWhereWithoutOtpCodesInput = {
-  where?: Prisma.UserWhereInput
-  data: Prisma.XOR<Prisma.UserUpdateWithoutOtpCodesInput, Prisma.UserUncheckedUpdateWithoutOtpCodesInput>
-}
-
-export type UserUpdateWithoutOtpCodesInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  email?: Prisma.StringFieldUpdateOperationsInput | string
-  username?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  usernameSet?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  name?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  bio?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  isBot?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  refreshTokens?: Prisma.RefreshTokenUpdateManyWithoutUserNestedInput
-  friendsInitiated?: Prisma.FriendshipUpdateManyWithoutUserNestedInput
-  friendsReceived?: Prisma.FriendshipUpdateManyWithoutFriendNestedInput
-  sentMessages?: Prisma.MessageUpdateManyWithoutSenderNestedInput
-}
-
-export type UserUncheckedUpdateWithoutOtpCodesInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  email?: Prisma.StringFieldUpdateOperationsInput | string
-  username?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  usernameSet?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  name?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  bio?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  isBot?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  refreshTokens?: Prisma.RefreshTokenUncheckedUpdateManyWithoutUserNestedInput
-  friendsInitiated?: Prisma.FriendshipUncheckedUpdateManyWithoutUserNestedInput
-  friendsReceived?: Prisma.FriendshipUncheckedUpdateManyWithoutFriendNestedInput
-  sentMessages?: Prisma.MessageUncheckedUpdateManyWithoutSenderNestedInput
 }
 
 export type UserCreateWithoutRefreshTokensInput = {
@@ -883,7 +759,6 @@ export type UserCreateWithoutRefreshTokensInput = {
   isBot?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
-  otpCodes?: Prisma.OtpCodeCreateNestedManyWithoutUserInput
   friendsInitiated?: Prisma.FriendshipCreateNestedManyWithoutUserInput
   friendsReceived?: Prisma.FriendshipCreateNestedManyWithoutFriendInput
   sentMessages?: Prisma.MessageCreateNestedManyWithoutSenderInput
@@ -900,7 +775,6 @@ export type UserUncheckedCreateWithoutRefreshTokensInput = {
   isBot?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
-  otpCodes?: Prisma.OtpCodeUncheckedCreateNestedManyWithoutUserInput
   friendsInitiated?: Prisma.FriendshipUncheckedCreateNestedManyWithoutUserInput
   friendsReceived?: Prisma.FriendshipUncheckedCreateNestedManyWithoutFriendInput
   sentMessages?: Prisma.MessageUncheckedCreateNestedManyWithoutSenderInput
@@ -933,7 +807,6 @@ export type UserUpdateWithoutRefreshTokensInput = {
   isBot?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  otpCodes?: Prisma.OtpCodeUpdateManyWithoutUserNestedInput
   friendsInitiated?: Prisma.FriendshipUpdateManyWithoutUserNestedInput
   friendsReceived?: Prisma.FriendshipUpdateManyWithoutFriendNestedInput
   sentMessages?: Prisma.MessageUpdateManyWithoutSenderNestedInput
@@ -950,7 +823,6 @@ export type UserUncheckedUpdateWithoutRefreshTokensInput = {
   isBot?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  otpCodes?: Prisma.OtpCodeUncheckedUpdateManyWithoutUserNestedInput
   friendsInitiated?: Prisma.FriendshipUncheckedUpdateManyWithoutUserNestedInput
   friendsReceived?: Prisma.FriendshipUncheckedUpdateManyWithoutFriendNestedInput
   sentMessages?: Prisma.MessageUncheckedUpdateManyWithoutSenderNestedInput
@@ -963,7 +835,6 @@ export type UserUncheckedUpdateWithoutRefreshTokensInput = {
 
 export type UserCountOutputType = {
   refreshTokens: number
-  otpCodes: number
   friendsInitiated: number
   friendsReceived: number
   sentMessages: number
@@ -971,7 +842,6 @@ export type UserCountOutputType = {
 
 export type UserCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   refreshTokens?: boolean | UserCountOutputTypeCountRefreshTokensArgs
-  otpCodes?: boolean | UserCountOutputTypeCountOtpCodesArgs
   friendsInitiated?: boolean | UserCountOutputTypeCountFriendsInitiatedArgs
   friendsReceived?: boolean | UserCountOutputTypeCountFriendsReceivedArgs
   sentMessages?: boolean | UserCountOutputTypeCountSentMessagesArgs
@@ -992,13 +862,6 @@ export type UserCountOutputTypeDefaultArgs<ExtArgs extends runtime.Types.Extensi
  */
 export type UserCountOutputTypeCountRefreshTokensArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   where?: Prisma.RefreshTokenWhereInput
-}
-
-/**
- * UserCountOutputType without action
- */
-export type UserCountOutputTypeCountOtpCodesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  where?: Prisma.OtpCodeWhereInput
 }
 
 /**
@@ -1035,7 +898,6 @@ export type UserSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = r
   createdAt?: boolean
   updatedAt?: boolean
   refreshTokens?: boolean | Prisma.User$refreshTokensArgs<ExtArgs>
-  otpCodes?: boolean | Prisma.User$otpCodesArgs<ExtArgs>
   friendsInitiated?: boolean | Prisma.User$friendsInitiatedArgs<ExtArgs>
   friendsReceived?: boolean | Prisma.User$friendsReceivedArgs<ExtArgs>
   sentMessages?: boolean | Prisma.User$sentMessagesArgs<ExtArgs>
@@ -1084,7 +946,6 @@ export type UserSelectScalar = {
 export type UserOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "email" | "username" | "usernameSet" | "name" | "avatarUrl" | "bio" | "isBot" | "createdAt" | "updatedAt", ExtArgs["result"]["user"]>
 export type UserInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   refreshTokens?: boolean | Prisma.User$refreshTokensArgs<ExtArgs>
-  otpCodes?: boolean | Prisma.User$otpCodesArgs<ExtArgs>
   friendsInitiated?: boolean | Prisma.User$friendsInitiatedArgs<ExtArgs>
   friendsReceived?: boolean | Prisma.User$friendsReceivedArgs<ExtArgs>
   sentMessages?: boolean | Prisma.User$sentMessagesArgs<ExtArgs>
@@ -1097,7 +958,6 @@ export type $UserPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs =
   name: "User"
   objects: {
     refreshTokens: Prisma.$RefreshTokenPayload<ExtArgs>[]
-    otpCodes: Prisma.$OtpCodePayload<ExtArgs>[]
     friendsInitiated: Prisma.$FriendshipPayload<ExtArgs>[]
     friendsReceived: Prisma.$FriendshipPayload<ExtArgs>[]
     sentMessages: Prisma.$MessagePayload<ExtArgs>[]
@@ -1508,7 +1368,6 @@ readonly fields: UserFieldRefs;
 export interface Prisma__UserClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise"
   refreshTokens<T extends Prisma.User$refreshTokensArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$refreshTokensArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$RefreshTokenPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
-  otpCodes<T extends Prisma.User$otpCodesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$otpCodesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$OtpCodePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   friendsInitiated<T extends Prisma.User$friendsInitiatedArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$friendsInitiatedArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$FriendshipPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   friendsReceived<T extends Prisma.User$friendsReceivedArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$friendsReceivedArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$FriendshipPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   sentMessages<T extends Prisma.User$sentMessagesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$sentMessagesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$MessagePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
@@ -1965,30 +1824,6 @@ export type User$refreshTokensArgs<ExtArgs extends runtime.Types.Extensions.Inte
   take?: number
   skip?: number
   distinct?: Prisma.RefreshTokenScalarFieldEnum | Prisma.RefreshTokenScalarFieldEnum[]
-}
-
-/**
- * User.otpCodes
- */
-export type User$otpCodesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  /**
-   * Select specific fields to fetch from the OtpCode
-   */
-  select?: Prisma.OtpCodeSelect<ExtArgs> | null
-  /**
-   * Omit specific fields from the OtpCode
-   */
-  omit?: Prisma.OtpCodeOmit<ExtArgs> | null
-  /**
-   * Choose, which related nodes to fetch as well
-   */
-  include?: Prisma.OtpCodeInclude<ExtArgs> | null
-  where?: Prisma.OtpCodeWhereInput
-  orderBy?: Prisma.OtpCodeOrderByWithRelationInput | Prisma.OtpCodeOrderByWithRelationInput[]
-  cursor?: Prisma.OtpCodeWhereUniqueInput
-  take?: number
-  skip?: number
-  distinct?: Prisma.OtpCodeScalarFieldEnum | Prisma.OtpCodeScalarFieldEnum[]
 }
 
 /**

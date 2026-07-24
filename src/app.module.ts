@@ -3,9 +3,18 @@ import { ConfigModule } from '@nestjs/config';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { PrismaModule } from './prisma/prisma.module';
+import { AuthModule } from './modules/auth/auth.module';
+import { SupabaseModule } from './modules/supabase/supabase.module';
+import { MailerModule } from './modules/mailer/mailer.module';
 
 @Module({
-  imports: [ConfigModule.forRoot({ isGlobal: true }), PrismaModule],
+  imports: [
+    ConfigModule.forRoot({ isGlobal: true }),
+    PrismaModule,
+    AuthModule,
+    SupabaseModule,
+    MailerModule,
+  ],
   controllers: [AppController],
   providers: [AppService],
 })

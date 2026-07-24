@@ -5,7 +5,7 @@ model OtpCode {
   expiresAt DateTime
   consumed  Boolean  @default(false)
   createdAt DateTime @default(now())
-  user      User?    @relation(fields: [userEmail], references: [email])
 
   @@index([userEmail])
+  @@map("otp_code")
 }

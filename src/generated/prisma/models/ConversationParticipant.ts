@@ -165,7 +165,7 @@ export type ConversationParticipantWhereInput = {
   NOT?: Prisma.ConversationParticipantWhereInput | Prisma.ConversationParticipantWhereInput[]
   id?: Prisma.StringFilter<"ConversationParticipant"> | string
   conversationId?: Prisma.StringFilter<"ConversationParticipant"> | string
-  userId?: Prisma.StringFilter<"ConversationParticipant"> | string
+  userId?: Prisma.UuidFilter<"ConversationParticipant"> | string
   conversation?: Prisma.XOR<Prisma.ConversationScalarRelationFilter, Prisma.ConversationWhereInput>
 }
 
@@ -183,7 +183,7 @@ export type ConversationParticipantWhereUniqueInput = Prisma.AtLeast<{
   OR?: Prisma.ConversationParticipantWhereInput[]
   NOT?: Prisma.ConversationParticipantWhereInput | Prisma.ConversationParticipantWhereInput[]
   conversationId?: Prisma.StringFilter<"ConversationParticipant"> | string
-  userId?: Prisma.StringFilter<"ConversationParticipant"> | string
+  userId?: Prisma.UuidFilter<"ConversationParticipant"> | string
   conversation?: Prisma.XOR<Prisma.ConversationScalarRelationFilter, Prisma.ConversationWhereInput>
 }, "id" | "conversationId_userId">
 
@@ -202,7 +202,7 @@ export type ConversationParticipantScalarWhereWithAggregatesInput = {
   NOT?: Prisma.ConversationParticipantScalarWhereWithAggregatesInput | Prisma.ConversationParticipantScalarWhereWithAggregatesInput[]
   id?: Prisma.StringWithAggregatesFilter<"ConversationParticipant"> | string
   conversationId?: Prisma.StringWithAggregatesFilter<"ConversationParticipant"> | string
-  userId?: Prisma.StringWithAggregatesFilter<"ConversationParticipant"> | string
+  userId?: Prisma.UuidWithAggregatesFilter<"ConversationParticipant"> | string
 }
 
 export type ConversationParticipantCreateInput = {
@@ -363,7 +363,7 @@ export type ConversationParticipantScalarWhereInput = {
   NOT?: Prisma.ConversationParticipantScalarWhereInput | Prisma.ConversationParticipantScalarWhereInput[]
   id?: Prisma.StringFilter<"ConversationParticipant"> | string
   conversationId?: Prisma.StringFilter<"ConversationParticipant"> | string
-  userId?: Prisma.StringFilter<"ConversationParticipant"> | string
+  userId?: Prisma.UuidFilter<"ConversationParticipant"> | string
 }
 
 export type ConversationParticipantCreateManyConversationInput = {

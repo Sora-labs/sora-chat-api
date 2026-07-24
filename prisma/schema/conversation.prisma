@@ -4,4 +4,6 @@ model Conversation {
   createdAt    DateTime                  @default(now())
   messages     Message[]
   participants ConversationParticipant[]
+
+  @@map("conversations")
 }

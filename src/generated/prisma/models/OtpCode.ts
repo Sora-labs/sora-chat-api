@@ -190,7 +190,6 @@ export type OtpCodeWhereInput = {
   expiresAt?: Prisma.DateTimeFilter<"OtpCode"> | Date | string
   consumed?: Prisma.BoolFilter<"OtpCode"> | boolean
   createdAt?: Prisma.DateTimeFilter<"OtpCode"> | Date | string
-  user?: Prisma.XOR<Prisma.UserNullableScalarRelationFilter, Prisma.UserWhereInput> | null
 }
 
 export type OtpCodeOrderByWithRelationInput = {
@@ -200,7 +199,6 @@ export type OtpCodeOrderByWithRelationInput = {
   expiresAt?: Prisma.SortOrder
   consumed?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
-  user?: Prisma.UserOrderByWithRelationInput
 }
 
 export type OtpCodeWhereUniqueInput = Prisma.AtLeast<{
@@ -213,7 +211,6 @@ export type OtpCodeWhereUniqueInput = Prisma.AtLeast<{
   expiresAt?: Prisma.DateTimeFilter<"OtpCode"> | Date | string
   consumed?: Prisma.BoolFilter<"OtpCode"> | boolean
   createdAt?: Prisma.DateTimeFilter<"OtpCode"> | Date | string
-  user?: Prisma.XOR<Prisma.UserNullableScalarRelationFilter, Prisma.UserWhereInput> | null
 }, "id">
 
 export type OtpCodeOrderByWithAggregationInput = {
@@ -242,11 +239,11 @@ export type OtpCodeScalarWhereWithAggregatesInput = {
 
 export type OtpCodeCreateInput = {
   id?: string
+  userEmail: string
   code: string
   expiresAt: Date | string
   consumed?: boolean
   createdAt?: Date | string
-  user?: Prisma.UserCreateNestedOneWithoutOtpCodesInput
 }
 
 export type OtpCodeUncheckedCreateInput = {
@@ -260,11 +257,11 @@ export type OtpCodeUncheckedCreateInput = {
 
 export type OtpCodeUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  userEmail?: Prisma.StringFieldUpdateOperationsInput | string
   code?: Prisma.StringFieldUpdateOperationsInput | string
   expiresAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   consumed?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  user?: Prisma.UserUpdateOneWithoutOtpCodesNestedInput
 }
 
 export type OtpCodeUncheckedUpdateInput = {
@@ -287,6 +284,7 @@ export type OtpCodeCreateManyInput = {
 
 export type OtpCodeUpdateManyMutationInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  userEmail?: Prisma.StringFieldUpdateOperationsInput | string
   code?: Prisma.StringFieldUpdateOperationsInput | string
   expiresAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   consumed?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -329,144 +327,6 @@ export type OtpCodeMinOrderByAggregateInput = {
   createdAt?: Prisma.SortOrder
 }
 
-export type OtpCodeListRelationFilter = {
-  every?: Prisma.OtpCodeWhereInput
-  some?: Prisma.OtpCodeWhereInput
-  none?: Prisma.OtpCodeWhereInput
-}
-
-export type OtpCodeOrderByRelationAggregateInput = {
-  _count?: Prisma.SortOrder
-}
-
-export type OtpCodeCreateNestedManyWithoutUserInput = {
-  create?: Prisma.XOR<Prisma.OtpCodeCreateWithoutUserInput, Prisma.OtpCodeUncheckedCreateWithoutUserInput> | Prisma.OtpCodeCreateWithoutUserInput[] | Prisma.OtpCodeUncheckedCreateWithoutUserInput[]
-  connectOrCreate?: Prisma.OtpCodeCreateOrConnectWithoutUserInput | Prisma.OtpCodeCreateOrConnectWithoutUserInput[]
-  createMany?: Prisma.OtpCodeCreateManyUserInputEnvelope
-  connect?: Prisma.OtpCodeWhereUniqueInput | Prisma.OtpCodeWhereUniqueInput[]
-}
-
-export type OtpCodeUncheckedCreateNestedManyWithoutUserInput = {
-  create?: Prisma.XOR<Prisma.OtpCodeCreateWithoutUserInput, Prisma.OtpCodeUncheckedCreateWithoutUserInput> | Prisma.OtpCodeCreateWithoutUserInput[] | Prisma.OtpCodeUncheckedCreateWithoutUserInput[]
-  connectOrCreate?: Prisma.OtpCodeCreateOrConnectWithoutUserInput | Prisma.OtpCodeCreateOrConnectWithoutUserInput[]
-  createMany?: Prisma.OtpCodeCreateManyUserInputEnvelope
-  connect?: Prisma.OtpCodeWhereUniqueInput | Prisma.OtpCodeWhereUniqueInput[]
-}
-
-export type OtpCodeUpdateManyWithoutUserNestedInput = {
-  create?: Prisma.XOR<Prisma.OtpCodeCreateWithoutUserInput, Prisma.OtpCodeUncheckedCreateWithoutUserInput> | Prisma.OtpCodeCreateWithoutUserInput[] | Prisma.OtpCodeUncheckedCreateWithoutUserInput[]
-  connectOrCreate?: Prisma.OtpCodeCreateOrConnectWithoutUserInput | Prisma.OtpCodeCreateOrConnectWithoutUserInput[]
-  upsert?: Prisma.OtpCodeUpsertWithWhereUniqueWithoutUserInput | Prisma.OtpCodeUpsertWithWhereUniqueWithoutUserInput[]
-  createMany?: Prisma.OtpCodeCreateManyUserInputEnvelope
-  set?: Prisma.OtpCodeWhereUniqueInput | Prisma.OtpCodeWhereUniqueInput[]
-  disconnect?: Prisma.OtpCodeWhereUniqueInput | Prisma.OtpCodeWhereUniqueInput[]
-  delete?: Prisma.OtpCodeWhereUniqueInput | Prisma.OtpCodeWhereUniqueInput[]
-  connect?: Prisma.OtpCodeWhereUniqueInput | Prisma.OtpCodeWhereUniqueInput[]
-  update?: Prisma.OtpCodeUpdateWithWhereUniqueWithoutUserInput | Prisma.OtpCodeUpdateWithWhereUniqueWithoutUserInput[]
-  updateMany?: Prisma.OtpCodeUpdateManyWithWhereWithoutUserInput | Prisma.OtpCodeUpdateManyWithWhereWithoutUserInput[]
-  deleteMany?: Prisma.OtpCodeScalarWhereInput | Prisma.OtpCodeScalarWhereInput[]
-}
-
-export type OtpCodeUncheckedUpdateManyWithoutUserNestedInput = {
-  create?: Prisma.XOR<Prisma.OtpCodeCreateWithoutUserInput, Prisma.OtpCodeUncheckedCreateWithoutUserInput> | Prisma.OtpCodeCreateWithoutUserInput[] | Prisma.OtpCodeUncheckedCreateWithoutUserInput[]
-  connectOrCreate?: Prisma.OtpCodeCreateOrConnectWithoutUserInput | Prisma.OtpCodeCreateOrConnectWithoutUserInput[]
-  upsert?: Prisma.OtpCodeUpsertWithWhereUniqueWithoutUserInput | Prisma.OtpCodeUpsertWithWhereUniqueWithoutUserInput[]
-  createMany?: Prisma.OtpCodeCreateManyUserInputEnvelope
-  set?: Prisma.OtpCodeWhereUniqueInput | Prisma.OtpCodeWhereUniqueInput[]
-  disconnect?: Prisma.OtpCodeWhereUniqueInput | Prisma.OtpCodeWhereUniqueInput[]
-  delete?: Prisma.OtpCodeWhereUniqueInput | Prisma.OtpCodeWhereUniqueInput[]
-  connect?: Prisma.OtpCodeWhereUniqueInput | Prisma.OtpCodeWhereUniqueInput[]
-  update?: Prisma.OtpCodeUpdateWithWhereUniqueWithoutUserInput | Prisma.OtpCodeUpdateWithWhereUniqueWithoutUserInput[]
-  updateMany?: Prisma.OtpCodeUpdateManyWithWhereWithoutUserInput | Prisma.OtpCodeUpdateManyWithWhereWithoutUserInput[]
-  deleteMany?: Prisma.OtpCodeScalarWhereInput | Prisma.OtpCodeScalarWhereInput[]
-}
-
-export type OtpCodeCreateWithoutUserInput = {
-  id?: string
-  code: string
-  expiresAt: Date | string
-  consumed?: boolean
-  createdAt?: Date | string
-}
-
-export type OtpCodeUncheckedCreateWithoutUserInput = {
-  id?: string
-  code: string
-  expiresAt: Date | string
-  consumed?: boolean
-  createdAt?: Date | string
-}
-
-export type OtpCodeCreateOrConnectWithoutUserInput = {
-  where: Prisma.OtpCodeWhereUniqueInput
-  create: Prisma.XOR<Prisma.OtpCodeCreateWithoutUserInput, Prisma.OtpCodeUncheckedCreateWithoutUserInput>
-}
-
-export type OtpCodeCreateManyUserInputEnvelope = {
-  data: Prisma.OtpCodeCreateManyUserInput | Prisma.OtpCodeCreateManyUserInput[]
-  skipDuplicates?: boolean
-}
-
-export type OtpCodeUpsertWithWhereUniqueWithoutUserInput = {
-  where: Prisma.OtpCodeWhereUniqueInput
-  update: Prisma.XOR<Prisma.OtpCodeUpdateWithoutUserInput, Prisma.OtpCodeUncheckedUpdateWithoutUserInput>
-  create: Prisma.XOR<Prisma.OtpCodeCreateWithoutUserInput, Prisma.OtpCodeUncheckedCreateWithoutUserInput>
-}
-
-export type OtpCodeUpdateWithWhereUniqueWithoutUserInput = {
-  where: Prisma.OtpCodeWhereUniqueInput
-  data: Prisma.XOR<Prisma.OtpCodeUpdateWithoutUserInput, Prisma.OtpCodeUncheckedUpdateWithoutUserInput>
-}
-
-export type OtpCodeUpdateManyWithWhereWithoutUserInput = {
-  where: Prisma.OtpCodeScalarWhereInput
-  data: Prisma.XOR<Prisma.OtpCodeUpdateManyMutationInput, Prisma.OtpCodeUncheckedUpdateManyWithoutUserInput>
-}
-
-export type OtpCodeScalarWhereInput = {
-  AND?: Prisma.OtpCodeScalarWhereInput | Prisma.OtpCodeScalarWhereInput[]
-  OR?: Prisma.OtpCodeScalarWhereInput[]
-  NOT?: Prisma.OtpCodeScalarWhereInput | Prisma.OtpCodeScalarWhereInput[]
-  id?: Prisma.StringFilter<"OtpCode"> | string
-  userEmail?: Prisma.StringFilter<"OtpCode"> | string
-  code?: Prisma.StringFilter<"OtpCode"> | string
-  expiresAt?: Prisma.DateTimeFilter<"OtpCode"> | Date | string
-  consumed?: Prisma.BoolFilter<"OtpCode"> | boolean
-  createdAt?: Prisma.DateTimeFilter<"OtpCode"> | Date | string
-}
-
-export type OtpCodeCreateManyUserInput = {
-  id?: string
-  code: string
-  expiresAt: Date | string
-  consumed?: boolean
-  createdAt?: Date | string
-}
-
-export type OtpCodeUpdateWithoutUserInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  code?: Prisma.StringFieldUpdateOperationsInput | string
-  expiresAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  consumed?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-}
-
-export type OtpCodeUncheckedUpdateWithoutUserInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  code?: Prisma.StringFieldUpdateOperationsInput | string
-  expiresAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  consumed?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-}
-
-export type OtpCodeUncheckedUpdateManyWithoutUserInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  code?: Prisma.StringFieldUpdateOperationsInput | string
-  expiresAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  consumed?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-}
-
 
 
 export type OtpCodeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -476,7 +336,6 @@ export type OtpCodeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs 
   expiresAt?: boolean
   consumed?: boolean
   createdAt?: boolean
-  user?: boolean | Prisma.OtpCode$userArgs<ExtArgs>
 }, ExtArgs["result"]["otpCode"]>
 
 export type OtpCodeSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -486,7 +345,6 @@ export type OtpCodeSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Exten
   expiresAt?: boolean
   consumed?: boolean
   createdAt?: boolean
-  user?: boolean | Prisma.OtpCode$userArgs<ExtArgs>
 }, ExtArgs["result"]["otpCode"]>
 
 export type OtpCodeSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -496,7 +354,6 @@ export type OtpCodeSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Exten
   expiresAt?: boolean
   consumed?: boolean
   createdAt?: boolean
-  user?: boolean | Prisma.OtpCode$userArgs<ExtArgs>
 }, ExtArgs["result"]["otpCode"]>
 
 export type OtpCodeSelectScalar = {
@@ -509,21 +366,10 @@ export type OtpCodeSelectScalar = {
 }
 
 export type OtpCodeOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "userEmail" | "code" | "expiresAt" | "consumed" | "createdAt", ExtArgs["result"]["otpCode"]>
-export type OtpCodeInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  user?: boolean | Prisma.OtpCode$userArgs<ExtArgs>
-}
-export type OtpCodeIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  user?: boolean | Prisma.OtpCode$userArgs<ExtArgs>
-}
-export type OtpCodeIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  user?: boolean | Prisma.OtpCode$userArgs<ExtArgs>
-}
 
 export type $OtpCodePayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   name: "OtpCode"
-  objects: {
-    user: Prisma.$UserPayload<ExtArgs> | null
-  }
+  objects: {}
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
     userEmail: string
@@ -925,7 +771,6 @@ readonly fields: OtpCodeFieldRefs;
  */
 export interface Prisma__OtpCodeClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise"
-  user<T extends Prisma.OtpCode$userArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.OtpCode$userArgs<ExtArgs>>): Prisma.Prisma__UserClient<runtime.Types.Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -978,10 +823,6 @@ export type OtpCodeFindUniqueArgs<ExtArgs extends runtime.Types.Extensions.Inter
    */
   omit?: Prisma.OtpCodeOmit<ExtArgs> | null
   /**
-   * Choose, which related nodes to fetch as well
-   */
-  include?: Prisma.OtpCodeInclude<ExtArgs> | null
-  /**
    * Filter, which OtpCode to fetch.
    */
   where: Prisma.OtpCodeWhereUniqueInput
@@ -1000,10 +841,6 @@ export type OtpCodeFindUniqueOrThrowArgs<ExtArgs extends runtime.Types.Extension
    */
   omit?: Prisma.OtpCodeOmit<ExtArgs> | null
   /**
-   * Choose, which related nodes to fetch as well
-   */
-  include?: Prisma.OtpCodeInclude<ExtArgs> | null
-  /**
    * Filter, which OtpCode to fetch.
    */
   where: Prisma.OtpCodeWhereUniqueInput
@@ -1021,10 +858,6 @@ export type OtpCodeFindFirstArgs<ExtArgs extends runtime.Types.Extensions.Intern
    * Omit specific fields from the OtpCode
    */
   omit?: Prisma.OtpCodeOmit<ExtArgs> | null
-  /**
-   * Choose, which related nodes to fetch as well
-   */
-  include?: Prisma.OtpCodeInclude<ExtArgs> | null
   /**
    * Filter, which OtpCode to fetch.
    */
@@ -1074,10 +907,6 @@ export type OtpCodeFindFirstOrThrowArgs<ExtArgs extends runtime.Types.Extensions
    */
   omit?: Prisma.OtpCodeOmit<ExtArgs> | null
   /**
-   * Choose, which related nodes to fetch as well
-   */
-  include?: Prisma.OtpCodeInclude<ExtArgs> | null
-  /**
    * Filter, which OtpCode to fetch.
    */
   where?: Prisma.OtpCodeWhereInput
@@ -1125,10 +954,6 @@ export type OtpCodeFindManyArgs<ExtArgs extends runtime.Types.Extensions.Interna
    * Omit specific fields from the OtpCode
    */
   omit?: Prisma.OtpCodeOmit<ExtArgs> | null
-  /**
-   * Choose, which related nodes to fetch as well
-   */
-  include?: Prisma.OtpCodeInclude<ExtArgs> | null
   /**
    * Filter, which OtpCodes to fetch.
    */
@@ -1178,10 +1003,6 @@ export type OtpCodeCreateArgs<ExtArgs extends runtime.Types.Extensions.InternalA
    */
   omit?: Prisma.OtpCodeOmit<ExtArgs> | null
   /**
-   * Choose, which related nodes to fetch as well
-   */
-  include?: Prisma.OtpCodeInclude<ExtArgs> | null
-  /**
    * The data needed to create a OtpCode.
    */
   data: Prisma.XOR<Prisma.OtpCodeCreateInput, Prisma.OtpCodeUncheckedCreateInput>
@@ -1215,10 +1036,6 @@ export type OtpCodeCreateManyAndReturnArgs<ExtArgs extends runtime.Types.Extensi
    */
   data: Prisma.OtpCodeCreateManyInput | Prisma.OtpCodeCreateManyInput[]
   skipDuplicates?: boolean
-  /**
-   * Choose, which related nodes to fetch as well
-   */
-  include?: Prisma.OtpCodeIncludeCreateManyAndReturn<ExtArgs> | null
 }
 
 /**
@@ -1233,10 +1050,6 @@ export type OtpCodeUpdateArgs<ExtArgs extends runtime.Types.Extensions.InternalA
    * Omit specific fields from the OtpCode
    */
   omit?: Prisma.OtpCodeOmit<ExtArgs> | null
-  /**
-   * Choose, which related nodes to fetch as well
-   */
-  include?: Prisma.OtpCodeInclude<ExtArgs> | null
   /**
    * The data needed to update a OtpCode.
    */
@@ -1289,10 +1102,6 @@ export type OtpCodeUpdateManyAndReturnArgs<ExtArgs extends runtime.Types.Extensi
    * Limit how many OtpCodes to update.
    */
   limit?: number
-  /**
-   * Choose, which related nodes to fetch as well
-   */
-  include?: Prisma.OtpCodeIncludeUpdateManyAndReturn<ExtArgs> | null
 }
 
 /**
@@ -1307,10 +1116,6 @@ export type OtpCodeUpsertArgs<ExtArgs extends runtime.Types.Extensions.InternalA
    * Omit specific fields from the OtpCode
    */
   omit?: Prisma.OtpCodeOmit<ExtArgs> | null
-  /**
-   * Choose, which related nodes to fetch as well
-   */
-  include?: Prisma.OtpCodeInclude<ExtArgs> | null
   /**
    * The filter to search for the OtpCode to update in case it exists.
    */
@@ -1338,10 +1143,6 @@ export type OtpCodeDeleteArgs<ExtArgs extends runtime.Types.Extensions.InternalA
    */
   omit?: Prisma.OtpCodeOmit<ExtArgs> | null
   /**
-   * Choose, which related nodes to fetch as well
-   */
-  include?: Prisma.OtpCodeInclude<ExtArgs> | null
-  /**
    * Filter which OtpCode to delete.
    */
   where: Prisma.OtpCodeWhereUniqueInput
@@ -1362,25 +1163,6 @@ export type OtpCodeDeleteManyArgs<ExtArgs extends runtime.Types.Extensions.Inter
 }
 
 /**
- * OtpCode.user
- */
-export type OtpCode$userArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  /**
-   * Select specific fields to fetch from the User
-   */
-  select?: Prisma.UserSelect<ExtArgs> | null
-  /**
-   * Omit specific fields from the User
-   */
-  omit?: Prisma.UserOmit<ExtArgs> | null
-  /**
-   * Choose, which related nodes to fetch as well
-   */
-  include?: Prisma.UserInclude<ExtArgs> | null
-  where?: Prisma.UserWhereInput
-}
-
-/**
  * OtpCode without action
  */
 export type OtpCodeDefaultArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -1392,8 +1174,4 @@ export type OtpCodeDefaultArgs<ExtArgs extends runtime.Types.Extensions.Internal
    * Omit specific fields from the OtpCode
    */
   omit?: Prisma.OtpCodeOmit<ExtArgs> | null
-  /**
-   * Choose, which related nodes to fetch as well
-   */
-  include?: Prisma.OtpCodeInclude<ExtArgs> | null
 }
