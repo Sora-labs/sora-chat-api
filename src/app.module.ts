@@ -7,6 +7,7 @@ import { AuthModule } from './modules/auth/auth.module';
 import { SupabaseModule } from './modules/supabase/supabase.module';
 import { MailerModule } from './modules/mailer/mailer.module';
 import { UsersModule } from './modules/users/users.module';
+import { FriendsModule } from './modules/friends/friends.module';
 
 @Module({
   imports: [
@@ -16,7 +17,7 @@ import { UsersModule } from './modules/users/users.module';
     SupabaseModule,
     MailerModule,
     UsersModule,
-    
+    FriendsModule,
   ],
   controllers: [AppController],
   providers: [AppService],
