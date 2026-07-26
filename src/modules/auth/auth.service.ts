@@ -3,8 +3,8 @@ import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 import { MailerService } from '../mailer/mailer.service';
 import * as crypto from 'crypto';
-import { ENV_KEYS } from '@/src/constants/config';
 import { PrismaService } from '../../prisma/prisma.service';
+import { ENV_KEYS } from '../../constants/config';
 
 @Injectable()
 export class AuthService {

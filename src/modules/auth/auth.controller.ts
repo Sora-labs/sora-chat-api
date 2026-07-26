@@ -28,6 +28,6 @@ export class AuthController {
 
   @Post('logout')
   logout(@Body() dto: LogoutDto) {
-    return this.authService.logout(dto.accessToken);
+    return this.authService.logout(dto.refreshToken);
   }
 }

@@ -1,7 +1,8 @@
-import { ENV_KEYS } from '@/src/constants/config';
+
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { createClient, SupabaseClient } from '@supabase/supabase-js';
+import { ENV_KEYS } from '../../constants/config';
 
 @Injectable()
 export class SupabaseService {

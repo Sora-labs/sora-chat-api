@@ -6,6 +6,7 @@ import { PrismaModule } from './prisma/prisma.module';
 import { AuthModule } from './modules/auth/auth.module';
 import { SupabaseModule } from './modules/supabase/supabase.module';
 import { MailerModule } from './modules/mailer/mailer.module';
+import { UsersModule } from './modules/users/users.module';
 
 @Module({
   imports: [
@@ -14,6 +15,8 @@ import { MailerModule } from './modules/mailer/mailer.module';
     AuthModule,
     SupabaseModule,
     MailerModule,
+    UsersModule,
+    
   ],
   controllers: [AppController],
   providers: [AppService],
