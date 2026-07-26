@@ -32,4 +32,17 @@ export class SupabaseService {
   async deleteAvatar(path: string) {
     await this.client.storage.from('avatars').remove([path]);
   }
+
+  async uploadChatMedia(conversationId: string, file: Buffer, mimeType: string) {
+    const ext = mimeType.split('/')[1];
+    const path = `${conversationId}/${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`;
+
+    const { error } = await this.client.storage
+      .from('chat-media')
+      .upload(path, file, { contentType: mimeType });
+    if (error) throw error;
+
+    const { data } = this.client.storage.from('chat-media').getPublicUrl(path);
+    return data.publicUrl;
+  }
 }

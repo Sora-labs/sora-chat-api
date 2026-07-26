@@ -8,6 +8,7 @@ import { SupabaseModule } from './modules/supabase/supabase.module';
 import { MailerModule } from './modules/mailer/mailer.module';
 import { UsersModule } from './modules/users/users.module';
 import { FriendsModule } from './modules/friends/friends.module';
+import { ChatModule } from './modules/chat/chat.module';
 
 @Module({
   imports: [
@@ -18,6 +19,7 @@ import { FriendsModule } from './modules/friends/friends.module';
     MailerModule,
     UsersModule,
     FriendsModule,
+    ChatModule,
   ],
   controllers: [AppController],
   providers: [AppService],

@@ -3,6 +3,7 @@ model ConversationParticipant {
   conversationId String
   userId         String       @db.Uuid
   conversation   Conversation @relation(fields: [conversationId], references: [id])
+  user           User         @relation(fields: [userId], references: [id])
 
   @@unique([conversationId, userId])
   @@map("conversation_participant")

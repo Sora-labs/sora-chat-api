@@ -5,6 +5,9 @@ model Message {
   senderId       String     @db.Uuid       
   sender         User      @relation("SentMessages", fields: [senderId], references: [id])
   content        String
+  mediaUrl       String?
+  mediaType      String?   // 'image' for now; 'video' | 'file' later
+  mediaSize      Int?      // bytes
   createdAt      DateTime     @default(now())
 
   @@index([conversationId, createdAt])

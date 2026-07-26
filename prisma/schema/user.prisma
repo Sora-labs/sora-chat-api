@@ -13,7 +13,7 @@ model User {
   refreshTokens RefreshToken[]
   friendsInitiated Friendship[] @relation("UserFriends")
   friendsReceived  Friendship[] @relation("FriendOfUser")
-
+  conversationParticipants ConversationParticipant[]
   sentMessages Message[] @relation("SentMessages")
   @@map("users")
 }
