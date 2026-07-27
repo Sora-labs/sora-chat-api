@@ -1,0 +1,67 @@
+{
+  "id": "e1a2b3c4-d5e6-4f70-8a91-chatapp0env1",
+  "name": "Chat App - Local",
+  "values": [
+    {
+      "key": "LOCAL",
+      "value": "http://localhost",
+      "type": "default",
+      "enabled": true
+    },
+    {
+      "key": "PORT",
+      "value": "3000",
+      "type": "default",
+      "enabled": true
+    },
+    {
+      "key": "BASE_URL",
+      "value": "{{LOCAL}}:{{PORT}}/api",
+      "type": "default",
+      "enabled": true
+    },
+    {
+      "key": "EMAIL",
+      "value": "test@example.com",
+      "type": "default",
+      "enabled": true
+    },
+    {
+      "key": "OTP_CODE",
+      "value": "",
+      "type": "default",
+      "enabled": true
+    },
+    {
+      "key": "ACCESS_TOKEN",
+      "value": "",
+      "type": "secret",
+      "enabled": true
+    },
+    {
+      "key": "REFRESH_TOKEN",
+      "value": "",
+      "type": "secret",
+      "enabled": true
+    },
+    {
+      "key": "USER_ID",
+      "value": "",
+      "type": "default",
+      "enabled": true
+    },
+    {
+      "key": "FRIEND_ID",
+      "value": "",
+      "type": "default",
+      "enabled": true
+    },
+    {
+      "key": "CONVERSATION_ID",
+      "value": "",
+      "type": "default",
+      "enabled": true
+    }
+  ],
+  "_postman_variable_scope": "environment"
+}

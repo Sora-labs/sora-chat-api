@@ -1,0 +1,377 @@
+{
+  "info": {
+    "_postman_id": "f9c3d2a1-0000-4000-8000-chatappcol01",
+    "name": "Realtime Chat App API",
+    "description": "Full API collection for the NestJS realtime chat backend. All routes are prefixed with /api. Import the companion environment file and run 'Auth > Verify OTP' first to auto-populate ACCESS_TOKEN for every subsequent request.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "auth": {
+    "type": "bearer",
+    "bearer": [
+      { "key": "token", "value": "{{ACCESS_TOKEN}}", "type": "string" }
+    ]
+  },
+  "item": [
+    {
+      "name": "Auth",
+      "item": [
+        {
+          "name": "Request OTP",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"{{EMAIL}}\"\n}"
+            },
+            "url": {
+              "raw": "{{BASE_URL}}/auth/request-otp",
+              "host": ["{{BASE_URL}}"],
+              "path": ["auth", "request-otp"]
+            },
+            "description": "Sends a 6-digit OTP code to the given email. Check your inbox (or DB in dev) and paste the code into the OTP_CODE environment variable before running Verify OTP."
+          }
+        },
+        {
+          "name": "Verify OTP",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "// Auto-capture tokens on successful login so every other request in this collection just works",
+                  "if (pm.response.code === 200 || pm.response.code === 201) {",
+                  "    const data = pm.response.json();",
+                  "    if (data.accessToken) {",
+                  "        pm.environment.set('ACCESS_TOKEN', data.accessToken);",
+                  "        console.log('ACCESS_TOKEN saved to environment');",
+                  "    }",
+                  "    if (data.refreshToken) {",
+                  "        pm.environment.set('REFRESH_TOKEN', data.refreshToken);",
+                  "        console.log('REFRESH_TOKEN saved to environment');",
+                  "    }",
+                  "    pm.test('Response contains accessToken', function () {",
+                  "        pm.expect(data.accessToken).to.be.a('string');",
+                  "    });",
+                  "} else {",
+                  "    pm.test('Verify OTP failed - check OTP_CODE is correct and not expired', function () {",
+                  "        pm.expect.fail('Status ' + pm.response.code + ': ' + pm.response.text());",
+                  "    });",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"{{EMAIL}}\",\n  \"code\": \"{{OTP_CODE}}\"\n}"
+            },
+            "url": {
+              "raw": "{{BASE_URL}}/auth/verify-otp",
+              "host": ["{{BASE_URL}}"],
+              "path": ["auth", "verify-otp"]
+            },
+            "description": "Verifies the OTP and logs in (creating the account on first login). On success, ACCESS_TOKEN and REFRESH_TOKEN are automatically saved to the environment via the Tests script - no manual copy/paste needed."
+          }
+        },
+        {
+          "name": "Refresh Token",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "if (pm.response.code === 200 || pm.response.code === 201) {",
+                  "    const data = pm.response.json();",
+                  "    if (data.accessToken) pm.environment.set('ACCESS_TOKEN', data.accessToken);",
+                  "    if (data.refreshToken) pm.environment.set('REFRESH_TOKEN', data.refreshToken);",
+                  "    console.log('Tokens rotated and saved');",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"refreshToken\": \"{{REFRESH_TOKEN}}\"\n}"
+            },
+            "url": {
+              "raw": "{{BASE_URL}}/auth/refresh",
+              "host": ["{{BASE_URL}}"],
+              "path": ["auth", "refresh"]
+            },
+            "description": "Rotates the refresh token and issues a new token pair. Simulates the frontend's silent-refresh mechanic."
+          }
+        },
+        {
+          "name": "Logout",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "if (pm.response.code === 200 || pm.response.code === 201) {",
+                  "    pm.environment.set('ACCESS_TOKEN', '');",
+                  "    pm.environment.set('REFRESH_TOKEN', '');",
+                  "    console.log('Tokens cleared from environment');",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"refreshToken\": \"{{REFRESH_TOKEN}}\"\n}"
+            },
+            "url": {
+              "raw": "{{BASE_URL}}/auth/logout",
+              "host": ["{{BASE_URL}}"],
+              "path": ["auth", "logout"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Users",
+      "item": [
+        {
+          "name": "Get My Profile",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "if (pm.response.code === 200) {",
+                  "    const data = pm.response.json();",
+                  "    if (data.id) pm.environment.set('USER_ID', data.id);",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{BASE_URL}}/users/me",
+              "host": ["{{BASE_URL}}"],
+              "path": ["users", "me"]
+            }
+          }
+        },
+        {
+          "name": "Update My Profile",
+          "request": {
+            "method": "PATCH",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"myusername\",\n  \"name\": \"My Display Name\",\n  \"bio\": \"Hey there, I'm using the chat app!\"\n}"
+            },
+            "url": {
+              "raw": "{{BASE_URL}}/users/me",
+              "host": ["{{BASE_URL}}"],
+              "path": ["users", "me"]
+            },
+            "description": "Note: username can only be set once (usernameSet flag). Remove the 'username' field on subsequent calls to only update name/bio."
+          }
+        },
+        {
+          "name": "Upload Avatar",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "file",
+                  "type": "file",
+                  "src": []
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{BASE_URL}}/users/me/avatar",
+              "host": ["{{BASE_URL}}"],
+              "path": ["users", "me", "avatar"]
+            },
+            "description": "Select an image file (jpg/png/webp) under 5MB in the 'file' form field."
+          }
+        },
+        {
+          "name": "Search Users",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{BASE_URL}}/users/search?q=john",
+              "host": ["{{BASE_URL}}"],
+              "path": ["users", "search"],
+              "query": [{ "key": "q", "value": "john" }]
+            },
+            "description": "Matches by exact email or fuzzy (contains) username."
+          }
+        },
+        {
+          "name": "Get Public Profile by ID",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{BASE_URL}}/users/{{FRIEND_ID}}",
+              "host": ["{{BASE_URL}}"],
+              "path": ["users", "{{FRIEND_ID}}"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Friends",
+      "item": [
+        {
+          "name": "List My Friends",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{BASE_URL}}/friends",
+              "host": ["{{BASE_URL}}"],
+              "path": ["friends"]
+            }
+          }
+        },
+        {
+          "name": "Get One Friend",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{BASE_URL}}/friends/{{FRIEND_ID}}",
+              "host": ["{{BASE_URL}}"],
+              "path": ["friends", "{{FRIEND_ID}}"]
+            }
+          }
+        },
+        {
+          "name": "Add Friend",
+          "request": {
+            "method": "POST",
+            "url": {
+              "raw": "{{BASE_URL}}/friends/{{FRIEND_ID}}",
+              "host": ["{{BASE_URL}}"],
+              "path": ["friends", "{{FRIEND_ID}}"]
+            },
+            "description": "Set FRIEND_ID in the environment to the target user's ID first (e.g. from a Search Users response)."
+          }
+        },
+        {
+          "name": "Remove Friend",
+          "request": {
+            "method": "DELETE",
+            "url": {
+              "raw": "{{BASE_URL}}/friends/{{FRIEND_ID}}",
+              "host": ["{{BASE_URL}}"],
+              "path": ["friends", "{{FRIEND_ID}}"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Conversations",
+      "item": [
+        {
+          "name": "List My Conversations",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{BASE_URL}}/conversations",
+              "host": ["{{BASE_URL}}"],
+              "path": ["conversations"]
+            }
+          }
+        },
+        {
+          "name": "Create/Find Direct Conversation",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "if (pm.response.code === 200 || pm.response.code === 201) {",
+                  "    const data = pm.response.json();",
+                  "    if (data.id) {",
+                  "        pm.environment.set('CONVERSATION_ID', data.id);",
+                  "        console.log('CONVERSATION_ID saved:', data.id);",
+                  "    }",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"participantId\": \"{{FRIEND_ID}}\"\n}"
+            },
+            "url": {
+              "raw": "{{BASE_URL}}/conversations",
+              "host": ["{{BASE_URL}}"],
+              "path": ["conversations"]
+            },
+            "description": "Finds an existing 1:1 conversation with participantId, or creates one. Auto-saves CONVERSATION_ID on success."
+          }
+        },
+        {
+          "name": "Get Messages (History)",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{BASE_URL}}/conversations/{{CONVERSATION_ID}}/messages?limit=30",
+              "host": ["{{BASE_URL}}"],
+              "path": ["conversations", "{{CONVERSATION_ID}}", "messages"],
+              "query": [
+                { "key": "limit", "value": "30" },
+                { "key": "before", "value": "", "disabled": true, "description": "message id cursor for pagination" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Upload Media (Image)",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                { "key": "file", "type": "file", "src": [] },
+                { "key": "caption", "type": "text", "value": "Check this out!" }
+              ]
+            },
+            "url": {
+              "raw": "{{BASE_URL}}/conversations/{{CONVERSATION_ID}}/media",
+              "host": ["{{BASE_URL}}"],
+              "path": ["conversations", "{{CONVERSATION_ID}}", "media"]
+            },
+            "description": "Max size is controlled by MEDIA_CAPACITY_PER_UPLOAD (bytes) in the backend .env. Images only for now (jpeg/png/webp/gif)."
+          }
+        }
+      ]
+    }
+  ]
+}
