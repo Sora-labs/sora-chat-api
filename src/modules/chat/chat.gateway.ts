@@ -15,6 +15,7 @@ import { ChatService } from './chat.service';
 import { SendMessageDto } from './dto/send-message.dto';
 import { validate } from 'class-validator';
 import { plainToInstance } from 'class-transformer';
+import { ENV_KEYS } from '../../constants/config';
 
 @WebSocketGateway({ cors: { origin: '*' } }) // tighten origin in production
 export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
@@ -33,7 +34,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
       if (!token) throw new Error('No token provided');
 
       const payload = await this.jwtService.verifyAsync(token, {
-        secret: this.config.get('JWT_ACCESS_SECRET'),
+        secret: this.config.get(ENV_KEYS.JWT_ACCESS_SECRET),
       });
 
       client.data.userId = payload.sub;
