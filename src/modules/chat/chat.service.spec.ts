@@ -1,168 +1,298 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { BadRequestException, ForbiddenException, NotFoundException } from '@nestjs/common';
-import { ChatService } from './chat.service';
+import { ConfigService } from '@nestjs/config';
+import { JwtService } from '@nestjs/jwt';
+import { BadRequestException, UnauthorizedException } from '@nestjs/common';
+import { AuthService } from '../auth/auth.service';
 import { PrismaService } from '../../prisma/prisma.service';
+import { MailerService } from '../mailer/mailer.service';
+import { ENV_KEYS } from '../../constants/config';
 
-describe('ChatService', () => {
-  let service: ChatService;
+describe('AuthService', () => {
+  let service: AuthService;
   let prisma: any;
+  let mailer: any;
+
+  const soraId = 'sora-user-uuid';
+
+  const mockNewUser = {
+    id: 'user-1',
+    email: 'test@example.com',
+    username: null,
+    deletionScheduledAt: null,
+  };
+
+  const mockExistingUser = {
+    id: 'user-2',
+    email: 'existing@example.com',
+    username: 'existinguser',
+    deletionScheduledAt: null,
+  };
 
   beforeEach(async () => {
     prisma = {
-      user: { findUnique: jest.fn() },
-      conversation: { findFirst: jest.fn(), create: jest.fn(), findMany: jest.fn() },
-      conversationParticipant: { findUnique: jest.fn() },
-      message: { findMany: jest.fn(), create: jest.fn() },
+      otpCode: {
+        findFirst: jest.fn(),
+        update: jest.fn(),
+        updateMany: jest.fn(),
+        create: jest.fn(),
+      },
+      user: {
+        findUnique: jest.fn(),
+        create: jest.fn(),
+        update: jest.fn(),
+      },
+      conversation: {
+        create: jest.fn(),
+      },
+      refreshToken: {
+        create: jest.fn(),
+        findUnique: jest.fn(),
+        update: jest.fn(),
+        updateMany: jest.fn(),
+      },
     };
 
+    mailer = { sendOtp: jest.fn() };
+
     const module: TestingModule = await Test.createTestingModule({
-      providers: [ChatService, { provide: PrismaService, useValue: prisma }],
+      providers: [
+        AuthService,
+        { provide: PrismaService, useValue: prisma },
+        { provide: MailerService, useValue: mailer },
+        {
+          provide: JwtService,
+          useValue: { sign: jest.fn().mockReturnValue('mocked.access.token') },
+        },
+        {
+          provide: ConfigService,
+          useValue: {
+            get: jest.fn((key: string) => {
+              const values: Record<string, string> = {
+                [ENV_KEYS.OTP_EXPIRES_MINUTES]: '10',
+                [ENV_KEYS.JWT_ACCESS_SECRET]: 'secret',
+                [ENV_KEYS.JWT_ACCESS_EXPIRES_IN]: '15m',
+                [ENV_KEYS.JWT_REFRESH_EXPIRES_IN]: '30d',
+                [ENV_KEYS.SORA_USER_ID]: soraId,
+              };
+              return values[key];
+            }),
+          },
+        },
+      ],
     }).compile();
 
-    service = module.get(ChatService);
+    service = module.get(AuthService);
   });
 
-  describe('findOrCreateDirectConversation', () => {
-    it('throws BadRequestException if userId equals otherUserId', async () => {
+  describe('requestOtp', () => {
+    it('generates a code, invalidates old codes, saves new one, and emails it', async () => {
+      await service.requestOtp('test@example.com');
+
+      expect(prisma.otpCode.updateMany).toHaveBeenCalledWith({
+        where: { userEmail: 'test@example.com', consumed: false },
+        data: { consumed: true },
+      });
+      expect(prisma.otpCode.create).toHaveBeenCalled();
+      expect(mailer.sendOtp).toHaveBeenCalledWith(
+        'test@example.com',
+        expect.stringMatching(/^\d{6}$/),
+      );
+    });
+  });
+
+  describe('verifyOtp', () => {
+    it('throws if no matching unconsumed OTP exists', async () => {
+      prisma.otpCode.findFirst.mockResolvedValue(null);
+
       await expect(
-        service.findOrCreateDirectConversation('u1', 'u1'),
+        service.verifyOtp('test@example.com', '123456'),
       ).rejects.toThrow(BadRequestException);
     });
 
-    it('throws NotFoundException if other user does not exist', async () => {
-      prisma.user.findUnique.mockResolvedValue(null);
-      await expect(
-        service.findOrCreateDirectConversation('u1', 'ghost'),
-      ).rejects.toThrow(NotFoundException);
-    });
-
-    it('returns the existing conversation if one already exists', async () => {
-      prisma.user.findUnique.mockResolvedValue({ id: 'u2' });
-      prisma.conversation.findFirst.mockResolvedValue({ id: 'convo-1' });
-
-      const result = await service.findOrCreateDirectConversation('u1', 'u2');
-
-      expect(result.id).toBe('convo-1');
-      expect(prisma.conversation.create).not.toHaveBeenCalled();
-    });
-
-    it('creates a new conversation with both participants if none exists', async () => {
-      prisma.user.findUnique.mockResolvedValue({ id: 'u2' });
-      prisma.conversation.findFirst.mockResolvedValue(null);
-      prisma.conversation.create.mockResolvedValue({ id: 'convo-new' });
-
-      const result = await service.findOrCreateDirectConversation('u1', 'u2');
-
-      expect(prisma.conversation.create).toHaveBeenCalledWith(
-        expect.objectContaining({
-          data: {
-            isBotChat: false,
-            participants: { create: [{ userId: 'u1' }, { userId: 'u2' }] },
-          },
-        }),
-      );
-      expect(result.id).toBe('convo-new');
-    });
-  });
-
-  describe('isParticipant', () => {
-    it('returns true when a participant row exists', async () => {
-      prisma.conversationParticipant.findUnique.mockResolvedValue({ id: 'p1' });
-      expect(await service.isParticipant('c1', 'u1')).toBe(true);
-    });
-
-    it('returns false when no participant row exists', async () => {
-      prisma.conversationParticipant.findUnique.mockResolvedValue(null);
-      expect(await service.isParticipant('c1', 'u1')).toBe(false);
-    });
-  });
-
-  describe('getMessages', () => {
-    it('throws ForbiddenException if user is not a participant', async () => {
-      prisma.conversationParticipant.findUnique.mockResolvedValue(null);
-      await expect(service.getMessages('c1', 'u1')).rejects.toThrow(ForbiddenException);
-    });
-
-    it('returns messages in oldest-first order', async () => {
-      prisma.conversationParticipant.findUnique.mockResolvedValue({ id: 'p1' });
-      prisma.message.findMany.mockResolvedValue([
-        { id: 'm2', content: 'second', createdAt: new Date('2026-01-02') },
-        { id: 'm1', content: 'first', createdAt: new Date('2026-01-01') },
-      ]);
-
-      const result = await service.getMessages('c1', 'u1');
-
-      expect(result[0].id).toBe('m1');
-      expect(result[1].id).toBe('m2');
-    });
-  });
-
-  describe('createMessage', () => {
-    it('throws ForbiddenException if sender is not a participant', async () => {
-      prisma.conversationParticipant.findUnique.mockResolvedValue(null);
-      await expect(
-        service.createMessage('c1', 'u1', 'hello'),
-      ).rejects.toThrow(ForbiddenException);
-    });
-
-    it('creates and returns the message with sender info', async () => {
-      prisma.conversationParticipant.findUnique.mockResolvedValue({ id: 'p1' });
-      prisma.message.create.mockResolvedValue({
-        id: 'm1',
-        content: 'hello',
-        sender: { id: 'u1', username: 'alice' },
+    it('throws if the OTP is expired', async () => {
+      prisma.otpCode.findFirst.mockResolvedValue({
+        id: 'otp-1',
+        expiresAt: new Date(Date.now() - 1000),
       });
 
-      const result = await service.createMessage('c1', 'u1', 'hello');
+      await expect(
+        service.verifyOtp('test@example.com', '123456'),
+      ).rejects.toThrow('Code expired');
+    });
 
-      expect(prisma.message.create).toHaveBeenCalledWith(
-        expect.objectContaining({
-          data: { conversationId: 'c1', senderId: 'u1', content: 'hello' },
-        }),
+    it('marks the OTP as consumed so it cannot be reused', async () => {
+      prisma.otpCode.findFirst.mockResolvedValue({
+        id: 'otp-1',
+        expiresAt: new Date(Date.now() + 60000),
+      });
+      prisma.user.findUnique.mockResolvedValue(mockExistingUser);
+      prisma.refreshToken.create.mockResolvedValue({});
+
+      await service.verifyOtp('existing@example.com', '123456');
+
+      expect(prisma.otpCode.update).toHaveBeenCalledWith({
+        where: { id: 'otp-1' },
+        data: { consumed: true },
+      });
+    });
+
+    describe('new user path', () => {
+      beforeEach(() => {
+        prisma.otpCode.findFirst.mockResolvedValue({
+          id: 'otp-1',
+          expiresAt: new Date(Date.now() + 60000),
+        });
+        prisma.user.findUnique.mockResolvedValue(null); // no existing user
+        prisma.user.create.mockResolvedValue(mockNewUser);
+        prisma.refreshToken.create.mockResolvedValue({});
+        prisma.conversation.create.mockResolvedValue({ id: 'convo-1' });
+      });
+
+      it('creates a new user and flags isNewUser: true', async () => {
+        const result = await service.verifyOtp('test@example.com', '123456');
+
+        expect(prisma.user.create).toHaveBeenCalledWith({
+          data: { email: 'test@example.com' },
+        });
+        expect(result.accessToken).toBe('mocked.access.token');
+        expect(result.refreshToken).toBeDefined();
+      });
+
+      it('auto-creates a bot conversation with Sora for the new user', async () => {
+        await service.verifyOtp('test@example.com', '123456');
+
+        expect(prisma.conversation.create).toHaveBeenCalledWith({
+          data: {
+            isBotChat: true,
+            participants: {
+              create: [{ userId: mockNewUser.id }, { userId: soraId }],
+            },
+          },
+        });
+      });
+
+      it('does NOT create a Sora conversation for a returning (existing) user', async () => {
+        prisma.user.findUnique.mockResolvedValue(mockExistingUser);
+
+        await service.verifyOtp('existing@example.com', '123456');
+
+        expect(prisma.conversation.create).not.toHaveBeenCalled();
+      });
+    });
+
+    describe('existing user path', () => {
+      it('does not recreate an existing user and flags isNewUser: false', async () => {
+        prisma.otpCode.findFirst.mockResolvedValue({
+          id: 'otp-1',
+          expiresAt: new Date(Date.now() + 60000),
+        });
+        prisma.user.findUnique.mockResolvedValue(mockExistingUser);
+        prisma.refreshToken.create.mockResolvedValue({});
+
+        const result = await service.verifyOtp('existing@example.com', '123456');
+
+        expect(prisma.user.create).not.toHaveBeenCalled();
+      });
+
+      it('auto-cancels a scheduled account deletion when the user logs back in', async () => {
+        const userPendingDeletion = {
+          ...mockExistingUser,
+          deletionScheduledAt: new Date(Date.now() + 3 * 24 * 60 * 60 * 1000), // 3 days out
+        };
+        prisma.otpCode.findFirst.mockResolvedValue({
+          id: 'otp-1',
+          expiresAt: new Date(Date.now() + 60000),
+        });
+        prisma.user.findUnique.mockResolvedValue(userPendingDeletion);
+        prisma.user.update.mockResolvedValue({ ...userPendingDeletion, deletionScheduledAt: null });
+        prisma.refreshToken.create.mockResolvedValue({});
+
+        await service.verifyOtp('existing@example.com', '123456');
+
+        expect(prisma.user.update).toHaveBeenCalledWith({
+          where: { id: userPendingDeletion.id },
+          data: { deletionScheduledAt: null },
+        });
+      });
+
+      it('does NOT call user.update for deletion-cancellation when no deletion is scheduled', async () => {
+        prisma.otpCode.findFirst.mockResolvedValue({
+          id: 'otp-1',
+          expiresAt: new Date(Date.now() + 60000),
+        });
+        prisma.user.findUnique.mockResolvedValue(mockExistingUser); // deletionScheduledAt: null
+        prisma.refreshToken.create.mockResolvedValue({});
+
+        await service.verifyOtp('existing@example.com', '123456');
+
+        expect(prisma.user.update).not.toHaveBeenCalled();
+      });
+    });
+  });
+
+  describe('refresh', () => {
+    it('throws UnauthorizedException for an unknown token', async () => {
+      prisma.refreshToken.findUnique.mockResolvedValue(null);
+
+      await expect(service.refresh('nonexistent-token')).rejects.toThrow(
+        UnauthorizedException,
       );
-      expect(result.content).toBe('hello');
+    });
+
+    it('throws UnauthorizedException for a revoked token', async () => {
+      prisma.refreshToken.findUnique.mockResolvedValue({
+        id: 'rt-1',
+        revoked: true,
+        expiresAt: new Date(Date.now() + 60000),
+        user: mockExistingUser,
+      });
+
+      await expect(service.refresh('some-token')).rejects.toThrow(
+        UnauthorizedException,
+      );
+    });
+
+    it('throws UnauthorizedException for an expired token', async () => {
+      prisma.refreshToken.findUnique.mockResolvedValue({
+        id: 'rt-1',
+        revoked: false,
+        expiresAt: new Date(Date.now() - 60000),
+        user: mockExistingUser,
+      });
+
+      await expect(service.refresh('some-token')).rejects.toThrow(
+        UnauthorizedException,
+      );
+    });
+
+    it('rotates the token: revokes old one and issues a new pair', async () => {
+      prisma.refreshToken.findUnique.mockResolvedValue({
+        id: 'rt-1',
+        revoked: false,
+        expiresAt: new Date(Date.now() + 60000),
+        user: mockExistingUser,
+      });
+      prisma.refreshToken.create.mockResolvedValue({});
+
+      const result = await service.refresh('valid-token');
+
+      expect(prisma.refreshToken.update).toHaveBeenCalledWith({
+        where: { id: 'rt-1' },
+        data: { revoked: true },
+      });
+      expect(result.accessToken).toBeDefined();
+      expect(result.refreshToken).toBeDefined();
     });
   });
 
-  describe('createMediaMessage', () => {
-  it('throws ForbiddenException if sender is not a participant', async () => {
-    prisma.conversationParticipant.findUnique.mockResolvedValue(null);
-    await expect(
-      service.createMediaMessage('c1', 'u1', 'https://cdn.test/img.png', 'image', 1000),
-    ).rejects.toThrow(ForbiddenException);
-  });
+  describe('logout', () => {
+    it('revokes the matching refresh token', async () => {
+      await service.logout('some-raw-token');
 
-  it('creates a media message with null content when no caption given', async () => {
-    prisma.conversationParticipant.findUnique.mockResolvedValue({ id: 'p1' });
-    prisma.message.create.mockResolvedValue({
-      id: 'm1',
-      mediaUrl: 'https://cdn.test/img.png',
-      mediaType: 'image',
-      content: null,
+      expect(prisma.refreshToken.updateMany).toHaveBeenCalledWith({
+        where: { token: expect.any(String) }, // hashed value
+        data: { revoked: true },
+      });
     });
-
-    await service.createMediaMessage('c1', 'u1', 'https://cdn.test/img.png', 'image', 1000);
-
-    expect(prisma.message.create).toHaveBeenCalledWith(
-      expect.objectContaining({
-        data: expect.objectContaining({ content: null, mediaType: 'image' }),
-      }),
-    );
   });
-
-  it('stores the caption as content when provided', async () => {
-    prisma.conversationParticipant.findUnique.mockResolvedValue({ id: 'p1' });
-    prisma.message.create.mockResolvedValue({ id: 'm1', content: 'Check this out' });
-
-    await service.createMediaMessage(
-      'c1', 'u1', 'https://cdn.test/img.png', 'image', 1000, 'Check this out',
-    );
-
-    expect(prisma.message.create).toHaveBeenCalledWith(
-      expect.objectContaining({
-        data: expect.objectContaining({ content: 'Check this out' }),
-      }),
-    );
-  });
-});
 });
