@@ -1,5 +1,5 @@
 model User {
-  id          String   @unique @db.Uuid @default(uuid())
+  id          String   @id @unique @db.Uuid @default(uuid())
   email       String   @unique
   username    String?  @unique
   usernameSet Boolean  @default(false) // enforces "change once"
@@ -9,6 +9,7 @@ model User {
   isBot       Boolean  @default(false)
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
+  deletionScheduledAt DateTime?
 
   refreshTokens RefreshToken[]
   friendsInitiated Friendship[] @relation("UserFriends")

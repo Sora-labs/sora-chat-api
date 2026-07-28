@@ -55,6 +55,14 @@ export class AuthService {
 
     // Find or create user
     let user = await this.prisma.user.findUnique({ where: { email } });
+
+    if (user?.deletionScheduledAt) {
+      user = await this.prisma.user.update({
+        where: { id: user.id },
+        data: { deletionScheduledAt: null },
+      });
+    }
+
     if (!user) {
       user = await this.prisma.user.create({ data: { email } });
 

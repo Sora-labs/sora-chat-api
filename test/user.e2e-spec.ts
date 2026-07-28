@@ -5,6 +5,7 @@ import request from 'supertest';
 import { AppModule } from '../src/app.module';
 import { PrismaService } from '../src/prisma/prisma.service';
 import { SupabaseService } from '../src/modules/supabase/supabase.service';
+import { UsersService } from '../src/modules/users/users.service';
 
 describe('Users (e2e)', () => {
   let app: INestApplication;
@@ -44,7 +45,13 @@ describe('Users (e2e)', () => {
   });
 
   afterAll(async () => {
-    await prisma.user.deleteMany({ where: { id: { in: [userId, otherUserId] } } });
+    const user = await prisma.user.findUnique({ where: { email: email } });
+    const otherUser = await prisma.user.findUnique({ where: { email: otherEmail } });
+    if (user && otherUser) {
+      const usersService = app.get(UsersService);
+      await usersService.permanentlyDeleteAccount(user.id).catch(() => {});
+      await usersService.permanentlyDeleteAccount(otherUser.id).catch(() => {});
+    }
     await app.close();
   });
 
@@ -139,5 +146,35 @@ describe('Users (e2e)', () => {
 
     expect(res.body.id).toBe(otherUserId);
     expect(res.body.email).toBeUndefined();
+  });
+
+  it('DELETE /users/me schedules deletion 7 days out, does not delete immediately', async () => {
+    const res = await request(app.getHttpServer())
+      .delete('/users/me')
+      .set('Authorization', `Bearer ${accessToken}`)
+      .expect(200);
+
+    expect(res.body.deletionScheduledAt).toBeDefined();
+
+    const stillExists = await prisma.user.findUnique({ where: { id: userId } });
+    expect(stillExists).not.toBeNull();
+    expect(stillExists?.deletionScheduledAt).not.toBeNull();
+  });
+
+  it('POST /users/me/cancel-deletion clears the scheduled deletion', async () => {
+    await request(app.getHttpServer())
+      .post('/users/me/cancel-deletion')
+      .set('Authorization', `Bearer ${accessToken}`)
+      .expect(201);
+
+    const user = await prisma.user.findUnique({ where: { id: userId } });
+    expect(user?.deletionScheduledAt).toBeNull();
+  });
+
+  it('POST /users/me/cancel-deletion rejects when nothing is scheduled', async () => {
+    await request(app.getHttpServer())
+      .post('/users/me/cancel-deletion')
+      .set('Authorization', `Bearer ${accessToken}`)
+      .expect(400);
   });
 });

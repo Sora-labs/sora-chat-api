@@ -107,4 +107,60 @@ export class UsersService {
     if (!user) throw new NotFoundException('User not found');
     return user;
   }
+
+  async requestAccountDeletion(userId: string) {
+    const user = await this.prisma.user.findUnique({ where: { id: userId } });
+    if (!user) throw new NotFoundException('User not found');
+
+    const deletionScheduledAt = new Date();
+    deletionScheduledAt.setDate(deletionScheduledAt.getDate() + 7);
+
+    await this.prisma.user.update({
+      where: { id: userId },
+      data: { deletionScheduledAt },
+    });
+
+    return {
+      message: 'Account scheduled for deletion',
+      deletionScheduledAt,
+    };
+  }
+
+  async cancelAccountDeletion(userId: string) {
+    const user = await this.prisma.user.findUnique({ where: { id: userId } });
+    if (!user) throw new NotFoundException('User not found');
+    if (!user.deletionScheduledAt) {
+      throw new BadRequestException('Account is not scheduled for deletion');
+    }
+
+    await this.prisma.user.update({
+      where: { id: userId },
+      data: { deletionScheduledAt: null },
+    });
+
+    return { message: 'Account deletion cancelled' };
+  }
+
+  async permanentlyDeleteAccount(userId: string) {
+    const user = await this.prisma.user.findUnique({ where: { id: userId } });
+    if (!user) throw new NotFoundException('User not found');
+
+    const conversations = await this.prisma.conversationParticipant.findMany({
+      where: { userId },
+      select: { conversationId: true },
+    });
+    const conversationIds = conversations.map((c) => c.conversationId);
+
+    await this.prisma.$transaction([
+      this.prisma.message.deleteMany({ where: { conversationId: { in: conversationIds } } }),
+      this.prisma.conversationParticipant.deleteMany({ where: { conversationId: { in: conversationIds } } }),
+      this.prisma.conversation.deleteMany({ where: { id: { in: conversationIds } } }),
+      this.prisma.friendship.deleteMany({ where: { OR: [{ userId }, { friendId: userId }] } }),
+      this.prisma.refreshToken.deleteMany({ where: { userId } }),
+      this.prisma.otpCode.deleteMany({ where: { userEmail: user.email } }),
+      this.prisma.user.delete({ where: { id: userId } }),
+    ]);
+
+    return { message: 'Account and all associated data deleted' };
+  }
 }

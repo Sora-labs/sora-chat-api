@@ -9,6 +9,7 @@ import {
   Req,
   UploadedFile,
   UseGuards,
+  Delete,
   UseInterceptors,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
@@ -16,7 +17,6 @@ import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { UsersService } from './users.service';
 import { UpdateProfileDto } from './dto/update-profile.dto';
 import { SearchUserDto } from './dto/search-user.dto';
-import type { Request } from "express";
 
 @UseGuards(JwtAuthGuard)
 @Controller('users')
@@ -47,5 +47,15 @@ export class UsersController {
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.usersService.findPublicProfile(id);
+  }
+
+  @Delete('me')
+  requestDeletion(@Req() req) {
+    return this.usersService.requestAccountDeletion(req.user.userId);
+  }
+
+  @Post('me/cancel-deletion')
+  cancelDeletion(@Req() req) {
+    return this.usersService.cancelAccountDeletion(req.user.userId);
   }
 }

@@ -177,4 +177,41 @@ describe('UsersService', () => {
       );
     });
   });
+
+  describe('requestAccountDeletion', () => {
+    it('throws NotFoundException if user does not exist', async () => {
+      prisma.user.findUnique.mockResolvedValue(null);
+      await expect(service.requestAccountDeletion('ghost')).rejects.toThrow(NotFoundException);
+    });
+
+    it('sets deletionScheduledAt roughly 7 days out', async () => {
+      prisma.user.findUnique.mockResolvedValue({ id: 'u1' });
+      prisma.user.update.mockResolvedValue({});
+
+      const result = await service.requestAccountDeletion('u1');
+
+      const diffDays = (result.deletionScheduledAt.getTime() - Date.now()) / (1000 * 60 * 60 * 24);
+      expect(diffDays).toBeGreaterThan(6.9);
+      expect(diffDays).toBeLessThan(7.1);
+    });
+  });
+
+  describe('cancelAccountDeletion', () => {
+    it('throws BadRequestException if no deletion is scheduled', async () => {
+      prisma.user.findUnique.mockResolvedValue({ id: 'u1', deletionScheduledAt: null });
+      await expect(service.cancelAccountDeletion('u1')).rejects.toThrow(BadRequestException);
+    });
+
+    it('clears deletionScheduledAt when one exists', async () => {
+      prisma.user.findUnique.mockResolvedValue({ id: 'u1', deletionScheduledAt: new Date() });
+      prisma.user.update.mockResolvedValue({});
+
+      await service.cancelAccountDeletion('u1');
+
+      expect(prisma.user.update).toHaveBeenCalledWith({
+        where: { id: 'u1' },
+        data: { deletionScheduledAt: null },
+      });
+    });
+  });
 });
