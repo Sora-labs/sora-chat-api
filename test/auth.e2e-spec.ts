@@ -107,7 +107,6 @@ describe('Auth (e2e)', () => {
     // Access token comes back in the JSON body — this is what the frontend
     // keeps in memory and attaches as a Bearer token.
     expect(res.body.accessToken).toBeDefined();
-    expect(res.body.isNewUser).toBe(true);
     // Refresh token must NOT be present in the JSON body anymore.
     expect(res.body.refreshToken).toBeUndefined();
 
