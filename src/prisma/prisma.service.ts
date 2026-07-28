@@ -7,6 +7,7 @@ import {
 import { PrismaClient } from '../generated/prisma/client';
 import { PrismaPg } from '@prisma/adapter-pg';
 import { ConfigService } from '@nestjs/config';
+import { ENV_KEYS } from '../constants/config';
 
 @Injectable()
 export class PrismaService
@@ -15,9 +16,9 @@ export class PrismaService
 {
   private readonly logger = new Logger(PrismaService.name);
 
-  constructor(private readonly config: ConfigService) {
+  constructor(config: ConfigService) {
     const adapter = new PrismaPg({
-      connectionString: config.get("DIRECT_URL"),
+      connectionString: config.get(ENV_KEYS.DIRECT_URL),
     });
 
     super({
@@ -25,8 +26,6 @@ export class PrismaService
       log: [
         { emit: 'stdout', level: 'warn' },
         { emit: 'stdout', level: 'error' },
-        // query logging via adapter works differently in v7
-        // use NestJS Logger instead for query-level logging
       ],
     });
   }

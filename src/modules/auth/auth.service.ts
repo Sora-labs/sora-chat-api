@@ -57,6 +57,14 @@ export class AuthService {
     let user = await this.prisma.user.findUnique({ where: { email } });
     if (!user) {
       user = await this.prisma.user.create({ data: { email } });
+
+      const soraId = this.config.get(ENV_KEYS.SORA_USER_ID);
+      await this.prisma.conversation.create({
+        data: {
+          isBotChat: true,
+          participants: { create: [{ userId: user.id }, { userId: soraId }] },
+        },
+      });
     }
 
     return this.issueTokens(user.id, user.email);

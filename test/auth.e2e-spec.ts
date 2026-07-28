@@ -27,10 +27,21 @@ describe('Auth (e2e)', () => {
   });
 
   afterAll(async () => {
-    // Clean up test data
-    await prisma.refreshToken.deleteMany({
-      where: { user: { email: testEmail } },
-    });
+    const user = await prisma.user.findUnique({ where: { email: testEmail } });
+    if (user) {
+      // Clean up Sora conversation + participants created during verifyOtp
+      const conversations = await prisma.conversationParticipant.findMany({
+        where: { userId: user.id },
+        select: { conversationId: true },
+      });
+      const conversationIds = conversations.map((c) => c.conversationId);
+
+      await prisma.message.deleteMany({ where: { conversationId: { in: conversationIds } } });
+      await prisma.conversationParticipant.deleteMany({ where: { conversationId: { in: conversationIds } } });
+      await prisma.conversation.deleteMany({ where: { id: { in: conversationIds } } });
+    }
+
+    await prisma.refreshToken.deleteMany({ where: { user: { email: testEmail } } });
     await prisma.otpCode.deleteMany({ where: { userEmail: testEmail } });
     await prisma.user.deleteMany({ where: { email: testEmail } });
     await app.close();

@@ -6,6 +6,7 @@ import { io, Socket } from 'socket.io-client';
 import { AppModule } from '../src/app.module';
 import { PrismaService } from '../src/prisma/prisma.service';
 import { SupabaseService } from '../src/modules/supabase/supabase.service';
+import { initTestApp } from '../src/utils/test';
 
 describe('Chat (e2e)', () => {
   let app: INestApplication;
@@ -29,9 +30,7 @@ describe('Chat (e2e)', () => {
       uploadChatMedia: jest.fn().mockResolvedValue('https://cdn.test/chat-media/fake.png'),
     }).compile();
 
-    app = moduleFixture.createNestApplication();
-    app.useGlobalPipes(new ValidationPipe({ whitelist: true, transform: true }));
-    app.setGlobalPrefix('api');
+    app = await initTestApp(moduleFixture);
     await app.listen(0); // random free port, needed for real socket connections
 
     const address = app.getHttpServer().address();

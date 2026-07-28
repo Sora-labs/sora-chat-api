@@ -16,6 +16,7 @@ import { SendMessageDto } from './dto/send-message.dto';
 import { validate } from 'class-validator';
 import { plainToInstance } from 'class-transformer';
 import { ENV_KEYS } from '../../constants/config';
+import { SoraService } from '../sora/sora.service';
 
 @WebSocketGateway({ cors: { origin: '*' } }) // tighten origin in production
 export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
@@ -24,6 +25,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
   constructor(
     private chatService: ChatService,
+    private soraService: SoraService,
     private jwtService: JwtService,
     private config: ConfigService,
   ) {}
@@ -91,6 +93,9 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
         dto.content,
       );
       this.server?.to(`conversation:${dto.conversationId}`).emit('new_message', message);
+      if (message.conversation.isBotChat) {
+        this.triggerSoraReply(dto.conversationId);
+      }
     } catch (err: any) {
       client.emit('error', { message: err.message ?? 'Failed to send message' });
     }
@@ -98,5 +103,21 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
   broadcastMessage(conversationId: string, message: unknown) {
     this.server?.to(`conversation:${conversationId}`).emit('new_message', message);
+  }
+
+  private async triggerSoraReply(conversationId: string) {
+    try {
+      const soraId = this.config.get('SORA_USER_ID');
+      const history = await this.chatService.getMessages(conversationId, soraId, undefined, 20);
+
+      const replyText = await this.soraService.generateReply(
+        history.map((m) => ({ senderId: m.senderId, content: m.content })),
+      );
+
+      const soraMessage = await this.chatService.createMessage(conversationId, soraId, replyText);
+      this.server?.to(`conversation:${conversationId}`).emit('new_message', soraMessage);
+    } catch (err: any) {
+      this.logger.error(`Sora reply failed: ${err.message}`);
+    }
   }
 }

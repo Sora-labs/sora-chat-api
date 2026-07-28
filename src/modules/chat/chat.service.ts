@@ -103,6 +103,7 @@ export class ChatService {
       data: { conversationId, senderId, content },
       include: {
         sender: { select: { id: true, username: true, name: true, avatarUrl: true } },
+        conversation: { select: { isBotChat: true } },
       },
     });
   }
