@@ -8,9 +8,9 @@ async function bootstrap() {
   app.setGlobalPrefix('api');
   app.use(cookieParser());
   app.enableCors({
-    origin: ENV_KEYS.FRONTEND_URL, // e.g. http://localhost:5173, NOT '*'
+    origin: process.env[ENV_KEYS.FRONTEND_URL], // e.g. http://localhost:5173, NOT '*'
     credentials: true, // required for cookies to be sent cross-origin
   });
-  await app.listen(ENV_KEYS.PORT ?? 3000);
+  await app.listen(process.env[ENV_KEYS.PORT] ?? 3000);
 }
 bootstrap();
