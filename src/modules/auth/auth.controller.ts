@@ -20,7 +20,7 @@ export class AuthController {
     res.cookie(REFRESH_COOKIE_NAME, refreshToken, {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
-      sameSite: 'lax',
+      sameSite: 'none',
       maxAge: maxAgeMs,
       path: '/api/auth',
     });
