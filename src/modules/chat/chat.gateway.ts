@@ -18,7 +18,15 @@ import { plainToInstance } from 'class-transformer';
 import { ENV_KEYS } from '../../constants/config';
 import { SoraService } from '../sora/sora.service';
 
-@WebSocketGateway({ cors: { origin: '*' } }) // tighten origin in production
+@WebSocketGateway({
+    cors: {
+      origin: [
+        process.env[ENV_KEYS.FRONTEND_URL],
+        process.env[ENV_KEYS.LOCAL_FRONTEND_URL],
+      ],
+      credentials: true,
+    }
+})
 export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
   @WebSocketServer() server?: Server;
   private logger = new Logger('ChatGateway');
